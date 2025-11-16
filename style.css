@@ -1,0 +1,605 @@
+/* --- Global Reset & Base Styles --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #007bff; /* Bright Blue */
+    --secondary-color: #6c757d; /* Muted Grey */
+    --accent-color: #28a745; /* Green for success/highlights */
+    --dark-bg: #212529; /* Dark background */
+    --light-bg: #f8f9fa; /* Light background */
+    --text-color: #343a40; /* Dark text */
+    --light-text-color: #e9ecef; /* Light text for dark backgrounds */
+    --card-bg: #ffffff; /* Card background */
+    --border-color: #dee2e6; /* Light border */
+    --gradient-start: #007bff;
+    --gradient-end: #00bcd4; /* Cyan for gradients */
+
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+    overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+h1 { font-size: 3.5rem; }
+h2 { font-size: 2.5rem; margin-bottom: 25px; position: relative; }
+h3 { font-size: 1.8rem; margin-bottom: 10px; }
+
+h2::after { /* Underline effect for section titles */
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    border-radius: 2px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* --- Buttons --- */
+.btn-primary, .btn-secondary {
+    display: inline-block;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-family: var(--font-heading);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    color: white; /* Keep text white on hover */
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 10px 20px;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary i, .btn-secondary i {
+    margin-left: 8px;
+}
+
+/* --- Header & Hero Section --- */
+/* --- Header & Hero Section --- */
+header {
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    position: relative;
+    overflow: hidden;
+    /* height: 100vh; */ /* <-- It's now commented out */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.hero-content {
+    max-width: 800px;
+    z-index: 10;
+    position: relative;
+}
+
+header h1 {
+    color: white !important;
+    font-size: 4.5rem;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+header .tagline {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 40px;
+    color: var(--light-text-color);
+}
+
+/* --- Sections Styling --- */
+section {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+section:last-of-type {
+    border-bottom: none;
+}
+
+/* --- NEW: Profile Section --- */
+#profile h2 {
+    text-align: center; /* Center the "Profile Summary" title */
+    margin-bottom: 40px; /* More space for the layout */
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    justify-content: center; /* Center items when they wrap */
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.profile-image {
+    flex-shrink: 0; /* Prevents the image from shrinking */
+    width: 250px;
+    height: 250px;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the space nicely */
+    border-radius: 50%; /* Makes the image circular */
+    border: 6px solid var(--card-bg);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-text {
+    flex: 1; /* Allows text to take remaining space */
+    min-width: 300px; /* Prevents text from getting too squished */
+}
+
+.profile-text p {
+    font-size: 1.1rem;
+    color: var(--secondary-color);
+    line-height: 1.7;
+}
+
+/* --- Skills Section --- */
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.skill-card {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skill-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.skill-card i {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    display: block; /* Ensures icon takes its own line */
+}
+
+.icon-gradient {
+    background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.skill-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.skill-card p {
+    font-size: 0.95rem;
+    color: var(--secondary-color);
+}
+
+/* --- NEW: Projects Section --- */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Slightly larger min-width */
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.project-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Ensures media border-radius works */
+}
+
+.project-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* NEW: Project Media Container */
+.project-media {
+    width: 100%;
+    aspect-ratio: 16 / 10; /* Gives a consistent shape */
+    background-color: #f0f0f0; /* Placeholder color */
+    margin-bottom: 20px;
+}
+
+.project-media img,
+.project-media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Covers the area, crops if needed */
+}
+
+/* Styles for the content inside the card */
+.project-card h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    padding: 0 30px; /* Add padding to content */
+}
+
+.project-tech {
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    margin-bottom: 15px;
+    font-weight: 600;
+    padding: 0 30px;
+}
+
+.project-card p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Allows paragraph to take available space */
+    padding: 0 30px;
+}
+
+.project-card .btn-secondary {
+    margin: 0 30px 30px 30px; /* Add margin to the button */
+    align-self: flex-start; /* Aligns button to the left */
+}
+
+/* --- Experience & Education Sections --- */
+.experience-item, .education-item {
+    background-color: var(--card-bg);
+    padding: 25px;
+    border-left: 5px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.experience-item:hover, .education-item:hover {
+    border-left-color: var(--accent-color);
+    transform: translateX(5px);
+}
+
+.experience-item h3, .education-item h3 {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+    color: var(--dark-bg);
+}
+
+.experience-detail, .education-detail {
+    font-style: italic;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* --- Achievements Section --- */
+#achievements ul li {
+    background-color: var(--card-bg);
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    font-size: 1.05rem;
+    color: var(--text-color);
+    transition: transform 0.2s ease;
+}
+
+#achievements ul li:hover {
+    transform: translateX(5px);
+    background-color: #f0f8ff; /* Light blue hover */
+}
+
+.icon-small {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    color: var(--primary-color);
+}
+
+/* --- Interests Section --- */
+.interests-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.interest-tag {
+    background-color: #e3f2fd; /* Very light blue */
+    color: var(--primary-color);
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+}
+
+.interest-tag:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.interest-tag i {
+    margin-right: 8px;
+}
+
+/* --- Footer (Upgraded) --- */
+footer {
+    background-color: var(--dark-bg);
+    color: var(--light-text-color);
+    text-align: center;
+    padding: 60px 20px 40px 20px; /* More padding on top */
+    font-size: 0.95rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 40px;
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    text-align: left;
+}
+
+.contact-details,
+.social-links {
+    flex: 1;
+    min-width: 250px; /* Ensures they don't get too squished */
+}
+
+.contact-details h3,
+.social-links h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.contact-details a {
+    display: block;
+    color: var(--light-text-color);
+    margin-bottom: 12px;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.contact-details a:hover {
+    color: var(--primary-color);
+}
+
+.contact-details a i {
+    margin-right: 12px;
+    width: 20px; /* Aligns icons neatly */
+    text-align: center;
+}
+
+.social-links a {
+    color: var(--light-text-color);
+    margin: 0 15px 0 0; /* Space out social links */
+    font-size: 1.8rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px) scale(1.1);
+}
+
+.copyright {
+    border-top: 1px solid #444; /* Separator line */
+    padding-top: 30px;
+    margin-top: 30px;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+}
+
+/* Remove old footer styles that are now handled */
+/* You can safely delete or ignore the old 'footer' and '.social-links' rules */
+
+.social-links {
+    margin-top: 20px;
+}
+
+.social-links a {
+    color: var(--light-text-color);
+    margin: 0 15px;
+    font-size: 1.5rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--primary-color);
+    transform: translateY(-3px) scale(1.1);
+}
+
+/* --- Animations (for scroll-reveal.js) --- */
+.scroll-reveal {
+    /*opacity: 0;*/
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.animate-fade-in {
+    animation: fadeIn 1.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.5rem; }
+
+    header {
+        padding: 80px 15px;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+    .hero-content .tagline {
+        font-size: 1.2rem;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    /* Updated responsive profile */
+    .profile-container {
+        flex-direction: column; /* Stack image and text vertically */
+        gap: 20px;
+    }
+
+    .profile-image {
+        width: 200px;
+        height: 200px;
+    }
+
+    .profile-text {
+        text-align: center;
+    }
+
+    .skills-grid, .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    section {
+        padding: 40px 0;
+    }
+
+    .experience-item, .education-item {
+        padding: 20px;
+    }
+
+    .interest-tag {
+        font-size: 0.9rem;
+        padding: 7px 15px;
+    }
+
+    /* Updated responsive project card padding */
+    .project-card h3,
+    .project-tech,
+    .project-card p {
+        padding: 0 20px;
+    }
+    .project-card .btn-secondary {
+        margin: 0 20px 20px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 2.5rem;
+    }
+    header .tagline {
+        font-size: 1rem;
+    }
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    h2 {
+        font-size: 1.8rem;
+    }
+}
