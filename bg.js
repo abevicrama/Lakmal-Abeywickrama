@@ -171,22 +171,83 @@
     });
   }
 
+  /* ── 3D tilt state ── */
+  const tilt = { rx: 0, ry: 0, targetRx: 0, targetRy: 0, dragging: false, startX: 0, startY: 0 };
+  const MAX_TILT = 22; /* degrees */
+
+  function applyTilt() {
+    /* spring lerp toward target */
+    tilt.rx += (tilt.targetRx - tilt.rx) * 0.08;
+    tilt.ry += (tilt.targetRy - tilt.ry) * 0.08;
+    canvas.style.transform = `perspective(900px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg) scale(1.06)`;
+  }
+
   function loop() {
+    applyTilt();
     update();
     draw();
     requestAnimationFrame(loop);
   }
 
   window.addEventListener('resize', () => { resize(); });
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    if (tilt.dragging) {
+      const dx = e.clientX - tilt.startX;
+      const dy = e.clientY - tilt.startY;
+      tilt.targetRy =  (dx / W) * MAX_TILT * 2;
+      tilt.targetRx = -(dy / H) * MAX_TILT * 2;
+      /* clamp */
+      tilt.targetRy = Math.max(-MAX_TILT, Math.min(MAX_TILT, tilt.targetRy));
+      tilt.targetRx = Math.max(-MAX_TILT, Math.min(MAX_TILT, tilt.targetRx));
+    }
+  });
   window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
 
-  /* touch support */
-  window.addEventListener('touchmove', e => {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
+  window.addEventListener('mousedown', e => {
+    tilt.dragging = true;
+    tilt.startX = e.clientX;
+    tilt.startY = e.clientY;
+    canvas.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mouseup', () => {
+    tilt.dragging = false;
+    tilt.targetRx = 0;
+    tilt.targetRy = 0;
+    canvas.style.cursor = 'default';
+  });
+
+  /* touch 3D tilt */
+  let touchStart = { x: 0, y: 0 };
+  window.addEventListener('touchstart', e => {
+    touchStart.x = e.touches[0].clientX;
+    touchStart.y = e.touches[0].clientY;
+    tilt.dragging = true;
+    tilt.startX = touchStart.x;
+    tilt.startY = touchStart.y;
   }, { passive: true });
-  window.addEventListener('touchend', () => { mouse.x = -9999; mouse.y = -9999; });
+  window.addEventListener('touchmove', e => {
+    const tx = e.touches[0].clientX;
+    const ty = e.touches[0].clientY;
+    mouse.x = tx;
+    mouse.y = ty;
+    if (tilt.dragging) {
+      const dx = tx - tilt.startX;
+      const dy = ty - tilt.startY;
+      tilt.targetRy =  (dx / W) * MAX_TILT * 2;
+      tilt.targetRx = -(dy / H) * MAX_TILT * 2;
+      tilt.targetRy = Math.max(-MAX_TILT, Math.min(MAX_TILT, tilt.targetRy));
+      tilt.targetRx = Math.max(-MAX_TILT, Math.min(MAX_TILT, tilt.targetRx));
+    }
+  }, { passive: true });
+  window.addEventListener('touchend', () => {
+    tilt.dragging = false;
+    tilt.targetRx = 0;
+    tilt.targetRy = 0;
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
 
   init();
   loop();

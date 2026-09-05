@@ -15,6 +15,9 @@
     z-index: 0;
     pointer-events: none;
     display: block;
+    transform-origin: center center;
+    will-change: transform;
+    transition: transform 0.05s linear;
 }
 
 :root {
