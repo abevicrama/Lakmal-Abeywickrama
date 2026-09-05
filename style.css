@@ -262,7 +262,6 @@ header {
     user-select: none;
 }
 
-
 /* header intro wrapper — left side */
 #header-intro {
     position: absolute;
@@ -270,90 +269,94 @@ header {
     top: 12%;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 16px;
     z-index: 2;
-    max-width: 340px;
+    max-width: 360px;
+}
+
+/* face image sits above intro */
+#header-face {
+    z-index: 3;
 }
 
 /* bio block */
 #header-bio {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
-.bio-role {
+/* role link */
+.bio-role-link {
+    display: inline-block;
     font-family: var(--font-heading);
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.02em;
-    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
-    margin: 0;
-}
-
-.bio-at {
     color: #fdbb2d;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    border-bottom: 2px solid rgba(253,187,45,0.4);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.bio-role-link:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.6);
 }
 
-.bio-degree {
+/* interest paragraph */
+.bio-para {
     font-family: var(--font-body);
     font-size: 0.88rem;
-    font-weight: 400;
-    color: rgba(255,255,255,0.72);
+    line-height: 1.65;
+    color: rgba(255,255,255,0.75);
     margin: 0;
-    letter-spacing: 0.03em;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.3);
 }
 
-.bio-interests {
-    list-style: none;
-    padding: 0;
-    margin: 4px 0 0;
+/* degree */
+.bio-degree {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.bio-interests li {
+    align-items: center;
+    gap: 8px;
     font-family: var(--font-body);
     font-size: 0.82rem;
-    color: rgba(255,255,255,0.65);
-    padding-left: 14px;
-    position: relative;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    margin: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+.bio-degree::before {
+    content: '🎓';
+    font-size: 1rem;
 }
 
-.bio-interests li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: #60a5fa;
-}
-
-/* mobile: stack intro above image, centered */
+/* mobile: restore label position + center intro */
 @media (max-width: 768px) {
+    #header-label {
+        top: 6%;
+        left: 50%;
+        bottom: auto;
+        transform: translateX(-50%);
+        font-size: 1.8rem;
+        text-align: center;
+        white-space: nowrap;
+        position: absolute;
+    }
     #header-intro {
         position: absolute;
-        top: 4%;
+        top: 14%;
         left: 50%;
         transform: translateX(-50%);
         align-items: center;
         text-align: center;
         max-width: 90vw;
-        gap: 8px;
+        gap: 10px;
     }
-    #header-label {
-        top: auto;
-        left: auto;
-        bottom: auto;
-        transform: none;
-        position: static;
-        font-size: 1.6rem;
-    }
-    .bio-interests li {
-        padding-left: 0;
-    }
-    .bio-interests li::before {
-        display: none;
+    .bio-degree {
+        justify-content: center;
     }
 }
 
