@@ -45,24 +45,7 @@
     <canvas id="tech-bg" aria-hidden="true"></canvas>
 
     <header class="animate-fade-in">
-        <nav class="site-nav" aria-label="Main Navigation">
-            <a href="#profile">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#skills">Skills</a>
-            <a href="#experience">Experience</a>
-            <a href="#education">Education</a>
-            <a href="#contact">Contact</a>
-        </nav>
-
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle color theme" title="Toggle dark / light mode">
-            <i class="fas fa-moon"></i>
-        </button>
-
-        <div class="hero-content">
-            <h1>K.M Lahiru Lakmal Abeywickrama</h1>
-            <p class="tagline">Crafting Digital Solutions with Passion and Precision</p>
-            <a href="#projects" class="btn-primary">View My Work <i class="fas fa-arrow-down"></i></a>
-        </div>
+        <img id="header-face" src="img/header/1.png" alt="Lahiru Lakmal Abeywickrama" draggable="false">
     </header>
 
     <div class="container">
@@ -241,5 +224,37 @@
 <script src="https://unpkg.com/scrollreveal"></script>
     <script src="script.js"></script>
     <script src="bg.js"></script>
+    <script>
+    /* Scroll-driven face frame animation: 1.png → 8.png */
+    (function () {
+      const img    = document.getElementById('header-face');
+      const header = document.querySelector('header');
+      const FRAMES = 8;
+      let current  = 1;
+
+      /* preload all frames */
+      const frames = [];
+      for (let i = 1; i <= FRAMES; i++) {
+        const p = new Image();
+        p.src = `img/header/${i}.png`;
+        frames.push(p);
+      }
+
+      function setFrame(n) {
+        if (n === current) return;
+        current = n;
+        img.src = `img/header/${n}.png`;
+      }
+
+      window.addEventListener('scroll', () => {
+        const headerH = header.offsetHeight;
+        const scrollY = window.scrollY;
+        /* map 0..headerH scroll range to frames 1..8 */
+        const progress = Math.min(scrollY / headerH, 1);
+        const frame    = 1 + Math.round(progress * (FRAMES - 1));
+        setFrame(frame);
+      }, { passive: true });
+    })();
+    </script>
 </body>
 </html>

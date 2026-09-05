@@ -230,41 +230,31 @@ a:hover {
 }
 
 /* --- Header & Hero Section --- */
-/* --- Header & Hero Section --- */
 header {
-    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    background: transparent;
     color: white;
     text-align: center;
-    padding: 100px 20px;
+    padding: 0;
     position: relative;
     overflow: hidden;
-    /* height: 100vh; */ /* <-- It's now commented out */
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* scroll-driven face image */
+#header-face {
+    display: block;
+    width: auto;
+    height: 80vh;
+    max-height: 700px;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
 }
 
-/* Light-mode header override so white toggle remains visible */
-html:not([data-theme="dark"]) header {
-    /* lighter, slightly bluish gradient for contrast with white toggle */
-    background: linear-gradient(135deg, #eef2ff 0%, #e6f0ff 50%, #f8fbff 100%);
-    color: var(--text-color);
-}
-
-/* Ensure header titles are dark in light mode and remove heavy text shadows */
-html:not([data-theme="dark"]) header h1,
-html:not([data-theme="dark"]) header .tagline {
-    color: var(--text-color) !important;
-    text-shadow: none !important;
-}
 
 /* Make site-nav more visible on the light header */
 html:not([data-theme="dark"]) .site-nav a {
