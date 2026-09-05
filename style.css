@@ -263,13 +263,14 @@ header {
     text-shadow: 0 2px 16px rgba(0,0,0,0.35);
     pointer-events: none;
     user-select: none;
+    z-index: 2;
 }
 
 @media (max-width: 768px) {
     #header-label {
-        top: auto;
+        top: 6%;
         left: 50%;
-        bottom: 58%;        /* just above the head */
+        bottom: auto;
         transform: translateX(-50%);
         font-size: 1.8rem;
         text-align: center;
