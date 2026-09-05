@@ -5,6 +5,18 @@
     box-sizing: border-box;
 }
 
+/* Tech background canvas — fixed full-screen behind everything */
+#tech-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+}
+
 :root {
     --primary-color: #007bff; /* Bright Blue */
     --secondary-color: #6c757d; /* Muted Grey */
@@ -25,6 +37,11 @@
 /* Theme overrides: support dark and light via data-theme on html */
 html {
     transition: background-color 0.25s ease, color 0.25s ease;
+    background-color: #f0f4ff; /* fallback until canvas paints */
+}
+
+html[data-theme="dark"] {
+    background-color: #071423;
 }
 
 /* Dark theme variables */
@@ -114,8 +131,10 @@ body {
     font-family: var(--font-body);
     line-height: 1.6;
     color: var(--text-color);
-    background-color: var(--light-bg);
-    overflow-x: hidden; /* Prevent horizontal scroll due to animations */
+    background-color: transparent; /* canvas provides the bg */
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1;
 }
 
 .container {
