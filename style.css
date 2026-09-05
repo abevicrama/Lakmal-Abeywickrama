@@ -251,11 +251,8 @@ header {
     height: 100vh;
 }
 
-/* Aloka text label — top-left of header near image */
+/* Aloka text label */
 #header-label {
-    position: absolute;
-    top: 12%;
-    left: calc(8% + 100px);
     font-family: 'Aloka', serif;
     font-size: 2.8rem;
     color: #ffffff;
@@ -263,18 +260,100 @@ header {
     text-shadow: 0 2px 16px rgba(0,0,0,0.35);
     pointer-events: none;
     user-select: none;
-    z-index: 2;
 }
 
+
+/* header intro wrapper — left side */
+#header-intro {
+    position: absolute;
+    left: calc(8% + 100px);
+    top: 12%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 2;
+    max-width: 340px;
+}
+
+/* bio block */
+#header-bio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bio-role {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    margin: 0;
+}
+
+.bio-at {
+    color: #fdbb2d;
+}
+
+.bio-degree {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: rgba(255,255,255,0.72);
+    margin: 0;
+    letter-spacing: 0.03em;
+}
+
+.bio-interests {
+    list-style: none;
+    padding: 0;
+    margin: 4px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bio-interests li {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.65);
+    padding-left: 14px;
+    position: relative;
+}
+
+.bio-interests li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #60a5fa;
+}
+
+/* mobile: stack intro above image, centered */
 @media (max-width: 768px) {
-    #header-label {
-        top: 6%;
+    #header-intro {
+        position: absolute;
+        top: 4%;
         left: 50%;
-        bottom: auto;
         transform: translateX(-50%);
-        font-size: 1.8rem;
+        align-items: center;
         text-align: center;
-        white-space: nowrap;
+        max-width: 90vw;
+        gap: 8px;
+    }
+    #header-label {
+        top: auto;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        position: static;
+        font-size: 1.6rem;
+    }
+    .bio-interests li {
+        padding-left: 0;
+    }
+    .bio-interests li::before {
+        display: none;
     }
 }
 
