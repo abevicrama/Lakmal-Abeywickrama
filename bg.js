@@ -4,11 +4,28 @@
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
 
-  let W, H, nodes, mouse = { x: -9999, y: -9999 };
+  let W, H, nodes, mouse = { x: -9999, y: -9999 }, prevMouse = { x: -9999, y: -9999 };
   const NODE_COUNT = 90;
   const CONNECT_DIST = 150;
   const MOUSE_DIST = 180;
   const MOUSE_REPEL = 60;
+
+  /* ── water ripple pool ── */
+  const ripples = [];
+  let rippleTimer = 0;
+
+  function spawnRipple(x, y, speed) {
+    ripples.push({
+      x, y,
+      r: 2,
+      maxR: 90 + Math.random() * 60,
+      life: 1,          /* 0..1, fades out */
+      decay: 0.016 + Math.random() * 0.012,
+      lineW: 1 + speed * 0.8,
+      rings: Math.random() < 0.4 ? 2 : 1,  /* occasional double ring */
+    });
+    if (ripples.length > 30) ripples.shift(); /* cap pool */
+  }
 
   /* ── palette pulled from CSS vars ── */
   function getPalette() {
@@ -130,6 +147,51 @@
       ctx.fill();
     });
 
+    /* ── water ripples ── */
+    ctx.globalAlpha = 1;
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const rippleColor = dark ? '96,165,250' : '0,123,255';
+    for (let i = ripples.length - 1; i >= 0; i--) {
+      const rp = ripples[i];
+      const progress = 1 - rp.life;                          /* 0=new, 1=gone */
+      const eased = Math.sin(progress * Math.PI);            /* bell curve */
+      const alpha = rp.life * eased * 0.55;
+
+      for (let ring = 0; ring < rp.rings; ring++) {
+        const ringOffset = ring * 18;
+        const r = rp.r + ringOffset;
+        if (r > rp.maxR) continue;
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${rippleColor},${alpha * (1 - ring * 0.4)})`;
+        ctx.lineWidth = rp.lineW * (1 - progress * 0.5);
+        ctx.stroke();
+      }
+
+      rp.r += (rp.maxR / 55);        /* expand speed */
+      rp.life -= rp.decay;
+      if (rp.life <= 0) ripples.splice(i, 1);
+    }
+
+    /* ── cursor water droplet ── */
+    if (mouse.x > 0) {
+      const dropAlpha = dark ? 0.55 : 0.45;
+      /* outer soft ring */
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(${rippleColor},${dropAlpha * 0.4})`;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      /* inner filled dot */
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 4, 0, Math.PI * 2);
+      const cg = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 4);
+      cg.addColorStop(0, dark ? 'rgba(52,211,153,0.9)' : 'rgba(0,188,212,0.85)');
+      cg.addColorStop(1, dark ? 'rgba(96,165,250,0.3)' : 'rgba(0,123,255,0.2)');
+      ctx.fillStyle = cg;
+      ctx.fill();
+    }
+
     /* mouse glow dot */
     if (mouse.x > 0) {
       const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, MOUSE_REPEL);
@@ -191,8 +253,21 @@
 
   window.addEventListener('resize', () => { resize(); });
   window.addEventListener('mousemove', e => {
+    prevMouse.x = mouse.x;
+    prevMouse.y = mouse.y;
     mouse.x = e.clientX;
     mouse.y = e.clientY;
+
+    /* spawn ripples based on mouse speed */
+    const dx = mouse.x - prevMouse.x;
+    const dy = mouse.y - prevMouse.y;
+    const speed = Math.sqrt(dx * dx + dy * dy);
+    rippleTimer++;
+    const interval = speed > 8 ? 2 : speed > 3 ? 4 : 8;
+    if (rippleTimer % interval === 0 && speed > 1 && mouse.x > 0) {
+      spawnRipple(mouse.x, mouse.y, Math.min(speed / 10, 2));
+    }
+
     if (tilt.dragging) {
       const dx = e.clientX - tilt.startX;
       const dy = e.clientY - tilt.startY;
@@ -210,6 +285,9 @@
     tilt.startX = e.clientX;
     tilt.startY = e.clientY;
     canvas.style.cursor = 'grabbing';
+    /* water drop impact on click */
+    spawnRipple(e.clientX, e.clientY, 2);
+    spawnRipple(e.clientX, e.clientY, 1.2);
   });
   window.addEventListener('mouseup', () => {
     tilt.dragging = false;
@@ -226,10 +304,14 @@
     tilt.dragging = true;
     tilt.startX = touchStart.x;
     tilt.startY = touchStart.y;
+    spawnRipple(touchStart.x, touchStart.y, 2);
   }, { passive: true });
   window.addEventListener('touchmove', e => {
     const tx = e.touches[0].clientX;
     const ty = e.touches[0].clientY;
+    const tdx = tx - mouse.x, tdy = ty - mouse.y;
+    const tspeed = Math.sqrt(tdx*tdx + tdy*tdy);
+    if (tspeed > 3) spawnRipple(tx, ty, Math.min(tspeed / 10, 2));
     mouse.x = tx;
     mouse.y = ty;
     if (tilt.dragging) {
