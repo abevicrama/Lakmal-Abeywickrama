@@ -252,8 +252,11 @@ header {
     min-height: 100vh;
 }
 
-/* Aloka text label */
+/* Aloka text label — pinned top-left on desktop, top-center on mobile */
 #header-label {
+    position: absolute;
+    top: 10%;
+    left: calc(8% + 100px);
     font-family: 'Aloka', serif;
     font-size: 2.8rem;
     color: #ffffff;
@@ -261,6 +264,7 @@ header {
     text-shadow: 0 2px 16px rgba(0,0,0,0.35);
     pointer-events: none;
     user-select: none;
+    z-index: 4;
 }
 
 /* header intro wrapper — left side */
@@ -334,8 +338,19 @@ header {
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-        padding-top: 70px;
+        padding-top: 100px;   /* leave room for absolute label */
         gap: 16px;
+    }
+
+    /* pin name to very top, outside flex flow */
+    #header-label {
+        position: absolute;
+        top: 6%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.8rem;
+        text-align: center;
+        white-space: nowrap;
     }
 
     #header-intro {
@@ -343,10 +358,6 @@ header {
         text-align: center;
         max-width: 90vw;
         flex: none;
-    }
-
-    #header-label {
-        font-size: 1.8rem;
     }
 
     .bio-degree {
