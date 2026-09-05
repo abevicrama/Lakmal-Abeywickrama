@@ -255,8 +255,8 @@ header {
 /* Aloka text label — pinned top-left on desktop, top-center on mobile */
 #header-label {
     position: absolute;
-    top: 10%;
-    left: calc(8% + 100px);
+    top: 24%;
+    left: 22%;
     font-family: 'Aloka', serif;
     font-size: 2.8rem;
     color: #ffffff;
