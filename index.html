@@ -225,35 +225,54 @@
     <script src="script.js"></script>
     <script src="bg.js"></script>
     <script>
-    /* Scroll-driven face frame animation: 1.png → 8.png */
+    /* Scroll + mouse-driven face frame animation: 1.png → 8.png */
     (function () {
       const img    = document.getElementById('header-face');
       const header = document.querySelector('header');
       const FRAMES = 8;
       let current  = 1;
+      let mouseProgress = -1;   /* -1 = mouse not on page */
+      let scrollProgress = 0;
 
       /* preload all frames */
-      const frames = [];
       for (let i = 1; i <= FRAMES; i++) {
         const p = new Image();
         p.src = `img/hearder/${i}.png`;
-        frames.push(p);
       }
 
       function setFrame(n) {
+        n = Math.max(1, Math.min(FRAMES, n));
         if (n === current) return;
         current = n;
         img.src = `img/hearder/${n}.png`;
       }
 
+      function update() {
+        /* mouse overrides scroll when on page; blend 70% mouse / 30% scroll */
+        let progress;
+        if (mouseProgress >= 0) {
+          progress = mouseProgress * 0.7 + scrollProgress * 0.3;
+        } else {
+          progress = scrollProgress;
+        }
+        setFrame(1 + Math.round(progress * (FRAMES - 1)));
+      }
+
       window.addEventListener('scroll', () => {
-        const headerH = header.offsetHeight;
-        const scrollY = window.scrollY;
-        /* map 0..headerH scroll range to frames 1..8 */
-        const progress = Math.min(scrollY / headerH, 1);
-        const frame    = 1 + Math.round(progress * (FRAMES - 1));
-        setFrame(frame);
+        const headerH = header.offsetHeight || window.innerHeight;
+        scrollProgress = Math.min(window.scrollY / headerH, 1);
+        update();
       }, { passive: true });
+
+      window.addEventListener('mousemove', e => {
+        mouseProgress = e.clientX / window.innerWidth;
+        update();
+      });
+
+      window.addEventListener('mouseleave', () => {
+        mouseProgress = -1;
+        update();
+      });
     })();
     </script>
 </body>
