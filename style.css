@@ -255,7 +255,7 @@ header {
 #header-label {
     position: absolute;
     top: 12%;
-    left: 8%;
+    left: calc(8% + 100px);
     font-family: 'Aloka', serif;
     font-size: 2.8rem;
     color: #ffffff;
@@ -263,6 +263,18 @@ header {
     text-shadow: 0 2px 16px rgba(0,0,0,0.35);
     pointer-events: none;
     user-select: none;
+}
+
+@media (max-width: 768px) {
+    #header-label {
+        top: auto;
+        left: 50%;
+        bottom: 58%;        /* just above the head */
+        transform: translateX(-50%);
+        font-size: 1.8rem;
+        text-align: center;
+        white-space: nowrap;
+    }
 }
 
 /* scroll-driven face image */
