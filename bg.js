@@ -73,6 +73,7 @@
     resize();
     nodes = Array.from({ length: NODE_COUNT }, makeNode);
     glyphs = Array.from({ length: 28 }, makeGlyph);
+    initBug();
   }
 
   let glyphs = [];
@@ -233,6 +234,209 @@
     });
   }
 
+  /* ── ladybug Easter egg ── */
+  const bug = {
+    x: 0, y: 0,
+    vx: 0.6, vy: 0.4,
+    angle: 0,              /* facing direction in radians */
+    size: 14,
+    scared: false,         /* fleeing mouse */
+    wiggle: 0,             /* leg animation phase */
+    caught: false,
+  };
+
+  function initBug() {
+    bug.x = W * 0.3 + Math.random() * W * 0.4;
+    bug.y = H * 0.3 + Math.random() * H * 0.4;
+  }
+
+  function drawBug() {
+    if (bug.caught) return;
+    const s = bug.size;
+    ctx.save();
+    ctx.translate(bug.x, bug.y);
+    ctx.rotate(bug.angle + Math.PI / 2);
+    ctx.globalAlpha = 0.92;
+
+    /* shadow */
+    ctx.beginPath();
+    ctx.ellipse(2, 2, s * 0.9, s * 0.7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.18)';
+    ctx.fill();
+
+    /* body — red ellipse */
+    ctx.beginPath();
+    ctx.ellipse(0, 0, s * 0.85, s, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#e8211a';
+    ctx.fill();
+
+    /* shell split line */
+    ctx.beginPath();
+    ctx.moveTo(0, -s);
+    ctx.lineTo(0, s);
+    ctx.strokeStyle = '#1a0000';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    /* head — dark circle */
+    ctx.beginPath();
+    ctx.arc(0, -s + 1, s * 0.52, 0, Math.PI * 2);
+    ctx.fillStyle = '#1a0000';
+    ctx.fill();
+
+    /* eyes */
+    ctx.beginPath();
+    ctx.arc(-s * 0.22, -s + 0.5, 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc( s * 0.22, -s + 0.5, 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    /* spots */
+    const spots = [[-s*0.4,-s*0.1],[s*0.4,-s*0.1],[-s*0.32,s*0.42],[s*0.32,s*0.42],[0,s*0.2]];
+    ctx.fillStyle = '#1a0000';
+    spots.forEach(([sx, sy]) => {
+      ctx.beginPath();
+      ctx.arc(sx, sy, s * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    /* antennae */
+    ctx.strokeStyle = '#1a0000';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-s * 0.2, -s + 1);
+    ctx.quadraticCurveTo(-s * 0.8, -s * 1.5, -s * 0.6, -s * 1.9);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo( s * 0.2, -s + 1);
+    ctx.quadraticCurveTo( s * 0.8, -s * 1.5, s * 0.6, -s * 1.9);
+    ctx.stroke();
+
+    /* legs — 3 each side, animated */
+    bug.wiggle += bug.scared ? 0.22 : 0.07;
+    const legPhase = Math.sin(bug.wiggle);
+    [[-1, 1]].forEach(() => {
+      for (let side = -1; side <= 1; side += 2) {
+        for (let li = 0; li < 3; li++) {
+          const ly = -s * 0.3 + li * s * 0.35;
+          const swing = legPhase * (li % 2 === 0 ? 1 : -1) * 3;
+          ctx.beginPath();
+          ctx.moveTo(side * s * 0.8, ly);
+          ctx.lineTo(side * (s * 1.5 + swing), ly + 4);
+          ctx.strokeStyle = '#1a0000';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+      }
+    });
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+
+  function updateBug() {
+    if (bug.caught) return;
+    const dx = bug.x - mouse.x;
+    const dy = bug.y - mouse.y;
+    const distToMouse = Math.sqrt(dx * dx + dy * dy);
+    const FLEE_RADIUS = 160;
+
+    bug.scared = distToMouse < FLEE_RADIUS;
+
+    if (bug.scared) {
+      /* flee — accelerate away from mouse */
+      const flee = (FLEE_RADIUS - distToMouse) / FLEE_RADIUS;
+      bug.vx += (dx / distToMouse) * flee * 0.55;
+      bug.vy += (dy / distToMouse) * flee * 0.55;
+    } else {
+      /* wander — gentle random drift */
+      bug.vx += (Math.random() - 0.5) * 0.06;
+      bug.vy += (Math.random() - 0.5) * 0.06;
+    }
+
+    /* speed cap */
+    const spd = Math.sqrt(bug.vx * bug.vx + bug.vy * bug.vy);
+    const maxSpd = bug.scared ? 4.5 : 1.2;
+    if (spd > maxSpd) { bug.vx = bug.vx / spd * maxSpd; bug.vy = bug.vy / spd * maxSpd; }
+
+    /* dampen */
+    bug.vx *= 0.94;
+    bug.vy *= 0.94;
+
+    bug.x += bug.vx;
+    bug.y += bug.vy;
+
+    /* face direction of travel */
+    if (spd > 0.1) bug.angle = Math.atan2(bug.vy, bug.vx);
+
+    /* bounce off edges */
+    const pad = bug.size + 10;
+    if (bug.x < pad)  { bug.x = pad;    bug.vx =  Math.abs(bug.vx); }
+    if (bug.x > W-pad){ bug.x = W-pad;  bug.vx = -Math.abs(bug.vx); }
+    if (bug.y < pad)  { bug.y = pad;    bug.vy =  Math.abs(bug.vy); }
+    if (bug.y > H-pad){ bug.y = H-pad;  bug.vy = -Math.abs(bug.vy); }
+  }
+
+  function showBugPopup() {
+    /* create overlay */
+    const overlay = document.createElement('div');
+    overlay.id = 'bug-overlay';
+    overlay.style.cssText = [
+      'position:fixed','inset:0','z-index:9999',
+      'display:flex','align-items:center','justify-content:center',
+      'background:rgba(0,0,0,0.45)','backdrop-filter:blur(4px)',
+      'animation:bugFadeIn 0.3s ease',
+    ].join(';');
+
+    const box = document.createElement('div');
+    box.style.cssText = [
+      'background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d)',
+      'border-radius:20px','padding:48px 56px','text-align:center',
+      'box-shadow:0 24px 64px rgba(0,0,0,0.5)',
+      'position:relative','max-width:420px','width:90%',
+      'animation:bugPop 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+    ].join(';');
+
+    box.innerHTML = `
+      <div style="font-size:5rem;line-height:1;margin-bottom:16px;">🐞</div>
+      <h2 style="color:#fff;font-family:'Poppins',sans-serif;font-size:1.7rem;margin-bottom:10px;">Wow! You found a Bug</h2>
+      <p style="color:rgba(255,255,255,0.78);font-family:'Open Sans',sans-serif;font-size:0.95rem;margin-bottom:28px;">
+        A rare ladybug hiding in the code. You've got sharp eyes! 🎉
+      </p>
+      <button id="bug-close" style="
+        background:#fff;color:#1a2a6c;border:none;
+        padding:12px 32px;border-radius:50px;
+        font-family:'Poppins',sans-serif;font-weight:700;
+        font-size:1rem;cursor:pointer;
+        box-shadow:0 4px 16px rgba(0,0,0,0.2);
+        transition:transform 0.15s ease,box-shadow 0.15s ease;
+      ">Close ✕</button>
+    `;
+
+    /* inject keyframes once */
+    if (!document.getElementById('bug-styles')) {
+      const st = document.createElement('style');
+      st.id = 'bug-styles';
+      st.textContent = `
+        @keyframes bugFadeIn { from { opacity:0 } to { opacity:1 } }
+        @keyframes bugPop { from { transform:scale(0.5) rotate(-8deg); opacity:0 }
+                             to   { transform:scale(1)   rotate(0deg);  opacity:1 } }
+        #bug-close:hover { transform:scale(1.06); box-shadow:0 6px 20px rgba(0,0,0,0.3); }
+      `;
+      document.head.appendChild(st);
+    }
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    const close = () => { overlay.remove(); bug.caught = false; initBug(); };
+    document.getElementById('bug-close').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  }
+
   /* ── 3D tilt state ── */
   const tilt = { rx: 0, ry: 0, targetRx: 0, targetRy: 0, dragging: false, startX: 0, startY: 0 };
   const MAX_TILT = 22; /* degrees */
@@ -247,7 +451,9 @@
   function loop() {
     applyTilt();
     update();
+    updateBug();
     draw();
+    drawBug();
     requestAnimationFrame(loop);
   }
 
@@ -280,11 +486,30 @@
   });
   window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
 
+  /* ladybug click detection — check on mousedown before tilt starts */
+  window.addEventListener('click', e => {
+    if (bug.caught) return;
+    const dx = e.clientX - bug.x;
+    const dy = e.clientY - bug.y;
+    if (Math.sqrt(dx*dx + dy*dy) < bug.size * 2.2) {
+      bug.caught = true;
+      showBugPopup();
+    }
+  });
+
+  /* update cursor when hovering bug */
+  window.addEventListener('mousemove', e => {
+    if (bug.caught) return;
+    const dx = e.clientX - bug.x;
+    const dy = e.clientY - bug.y;
+    canvas.style.cursor = Math.sqrt(dx*dx + dy*dy) < bug.size * 2.2 ? 'pointer' : '';
+  }, { capture: true });
+
   window.addEventListener('mousedown', e => {
     tilt.dragging = true;
     tilt.startX = e.clientX;
     tilt.startY = e.clientY;
-    canvas.style.cursor = 'grabbing';
+    if (canvas.style.cursor !== 'pointer') canvas.style.cursor = 'grabbing';
     /* water drop impact on click */
     spawnRipple(e.clientX, e.clientY, 2);
     spawnRipple(e.clientX, e.clientY, 1.2);
