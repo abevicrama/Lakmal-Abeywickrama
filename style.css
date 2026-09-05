@@ -333,30 +333,49 @@ header {
     font-size: 1rem;
 }
 
-/* mobile: restore label position + center intro */
+/* mobile: vertical stack — text top, image bottom */
 @media (max-width: 768px) {
-    #header-label {
-        top: 6%;
-        left: 50%;
-        bottom: auto;
-        transform: translateX(-50%);
-        font-size: 1.8rem;
-        text-align: center;
-        white-space: nowrap;
-        position: absolute;
+    header {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        height: auto;
+        min-height: 100vh;
+        padding-top: 60px;
+        gap: 0;
     }
+
     #header-intro {
-        position: absolute;
-        top: 14%;
-        left: 50%;
-        transform: translateX(-50%);
+        position: static;
+        transform: none;
+        left: auto;
+        top: auto;
         align-items: center;
         text-align: center;
         max-width: 90vw;
         gap: 10px;
+        padding: 0 16px;
+        z-index: 2;
     }
+
+    #header-label {
+        font-size: 1.8rem;
+        text-align: center;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
     .bio-degree {
         justify-content: center;
+    }
+
+    #header-face {
+        position: static;
+        width: 85vw;
+        height: auto;
+        max-height: 55vh;
+        margin-top: 12px;
+        z-index: 3;
     }
 }
 
