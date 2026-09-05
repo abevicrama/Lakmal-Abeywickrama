@@ -45,7 +45,7 @@
     <canvas id="tech-bg" aria-hidden="true"></canvas>
 
     <header class="animate-fade-in">
-        <img id="header-face" src="img/header/1.png" alt="Lahiru Lakmal Abeywickrama" draggable="false">
+        <img id="header-face" src="img/hearder/1.png" alt="Lahiru Lakmal Abeywickrama" draggable="false">
     </header>
 
     <div class="container">
@@ -236,14 +236,14 @@
       const frames = [];
       for (let i = 1; i <= FRAMES; i++) {
         const p = new Image();
-        p.src = `img/header/${i}.png`;
+        p.src = `img/hearder/${i}.png`;
         frames.push(p);
       }
 
       function setFrame(n) {
         if (n === current) return;
         current = n;
-        img.src = `img/header/${n}.png`;
+        img.src = `img/hearder/${n}.png`;
       }
 
       window.addEventListener('scroll', () => {
