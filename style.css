@@ -229,6 +229,14 @@ a:hover {
     margin-left: 8px;
 }
 
+/* Aloka custom font */
+@font-face {
+    font-family: 'Aloka';
+    src: url('fonts/Aloka.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* --- Header & Hero Section --- */
 header {
     background: transparent;
@@ -243,6 +251,20 @@ header {
     height: 100vh;
 }
 
+/* Aloka text label — top-left of header near image */
+#header-label {
+    position: absolute;
+    top: 12%;
+    left: 8%;
+    font-family: 'Aloka', serif;
+    font-size: 2.8rem;
+    color: #ffffff;
+    white-space: nowrap;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.35);
+    pointer-events: none;
+    user-select: none;
+}
+
 /* scroll-driven face image */
 #header-face {
     display: block;
@@ -253,6 +275,8 @@ header {
     user-select: none;
     pointer-events: none;
     transition: opacity 0.12s ease;
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 85%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 85%);
 }
 
 
